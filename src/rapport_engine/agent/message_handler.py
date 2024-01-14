@@ -161,9 +161,6 @@ class MessageHandler:
         spec = self._agent_configuration.data["spec"]
         model = spec["model"]
         max_tokens = spec["messages"]["limits"]["output"]["tokens"]
-
-        print(messages)
-
         return client.chat.completions.create(
             model=model, messages=messages, max_tokens=max_tokens, user=user_id
         )
