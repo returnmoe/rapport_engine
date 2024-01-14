@@ -2,6 +2,15 @@ version: '3.9'
 
 services:
 
+  rapport_engine:
+    build:
+      context: .
+    restart: always
+    networks:
+      - rapport-engine
+    env_file:
+      - .env
+
   redis:
     image: redis:7-alpine
     restart: always
