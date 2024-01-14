@@ -4,6 +4,8 @@ from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
 from typing import Callable
 
+ERR_INVALID_TYPE = "Error: invalid type"
+
 
 class CommandHandler:
     def __init__(
@@ -60,7 +62,7 @@ class CommandHandler:
             add_handler = self._get_add_handler(context.args[0])
 
             if not callable(add_handler):
-                await update.message.reply_text("Error: invalid type")
+                await update.message.reply_text(ERR_INVALID_TYPE)
                 return
 
             return await update.message.reply_text(add_handler(context.args))
@@ -75,7 +77,7 @@ class CommandHandler:
             list_handler = self._get_list_handler(context.args[0])
 
             if not callable(list_handler):
-                await update.message.reply_text("Error: invalid type")
+                await update.message.reply_text(ERR_INVALID_TYPE)
                 return
 
             return await update.message.reply_text(list_handler(context.args))
@@ -91,7 +93,7 @@ class CommandHandler:
             remove_handler = self._get_remove_handler(context.args[0])
 
             if not callable(remove_handler):
-                await update.message.reply_text("Error: invalid type")
+                await update.message.reply_text(ERR_INVALID_TYPE)
                 return
 
             return await update.message.reply_text(
