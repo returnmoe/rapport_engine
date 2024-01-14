@@ -37,7 +37,7 @@ class MessagePreprocessor:
         # Environment variables
 
         if name.startswith("RAPPORT_ENV_"):
-            os.environ.get(name, None)
+            return os.environ.get(name, None)
 
         return None
 
