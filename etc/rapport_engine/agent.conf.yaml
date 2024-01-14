@@ -4,7 +4,7 @@
 kind: RapportAgent
 
 # API version for the RapportAgent. Should always be the specified value.
-apiVersion: engine.rapport.return.moe/v1beta1
+apiVersion: engine.rapport.return.moe/v1alpha1
 
 metadata:
   # A unique identifier for the RapportAgent.

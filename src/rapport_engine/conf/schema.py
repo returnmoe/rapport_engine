@@ -2,7 +2,7 @@ agent = {
     "type": "object",
     "properties": {
         "kind": {"const": "RapportAgent"},
-        "apiVersion": {"const": "engine.rapport.return.moe/v1beta1"},
+        "apiVersion": {"const": "engine.rapport.return.moe/v1alpha1"},
         "metadata": {
             "type": "object",
             "properties": {
