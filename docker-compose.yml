@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - rapport-engine
+    volumes:
+      - ./etc/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - redis-data:/data:rw
+    ports:
+      - 127.0.0.1:6379:6379
+
+networks:
+  rapport-engine:
+
+volumes:
+  redis-data:

@@ -1,0 +1,119 @@
+# RapportAgent Configuration File
+
+# The type of resource. Should always be 'RapportAgent'
+kind: RapportAgent
+
+# API version for the RapportAgent. Should always be the specified value.
+apiVersion: engine.rapport.return.moe/v1beta1
+
+metadata:
+  # A unique identifier for the RapportAgent.
+  name: chatbot-agent
+
+spec:
+
+  # Defines the conditions under which the agent is activated.
+  activation:
+    # Agent activates on reply.
+    - type: reply
+    
+    # Agent activates when it detects the specified keyword
+    # (in this case, the user's Telegram username).
+    - type: keyword
+      value: ${RAPPORT_USERNAME}
+      
+    # Agent activates when it detects the specified keyword
+    # (in this case, the user's first name).
+    - type: keyword
+      value: ${RAPPORT_FIRST_NAME}
+
+  # Specifies a list of users with admin privileges.
+  admin:
+    - "124408302"
+
+  # Defines the message history the agent stores.
+  history:
+    # The wildcard '*' indicates this rule is applied to all sources.
+    # Here, it is set to store the last 256 messages and use up to 8
+    # messages as context.
+    - source: '*'
+      maxStorageSize: 256
+      maxChainSize: 8
+
+  messages:
+    limits:
+
+      daily:
+        # Maximum number of tokens, including both input (prompt) and
+        # output (completion) tokens, that can be consumed per day.
+        tokens: 10240
+
+      input:
+        # Maximum number of tokens the input message can contain.
+        # Default is 1024 if unspecified.
+        tokens: 1024
+
+        # Specifies the action when input exceeds max tokens.
+        # Can either be 'truncate' (default) or 'reject'.
+        action: truncate
+
+      output:
+        # Maximum number of tokens the output message can contain.
+        # Default is 1024 if unspecified.
+        tokens: 1024
+        
+        # Specifies the action when output exceeds max tokens.
+        # As for the current version, it must always be 'truncate'.
+        action: truncate
+
+      rate:
+
+        # Rate limits per user
+        user:
+          interactions: 30
+          window: 15m
+
+    errors:
+      # Generic error message for unforeseen issues.
+      generic: Sorry, I am not available right now.
+      
+      # Error message when the daily token limit is exceeded.
+      dailyLimitExceeded: Sorry, my daily token limit has been exceeded.
+
+      # Error message when a rate limit is exceeded.
+      rateLimitExceeded: Your request has been rate limited. Try again later.
+
+  # The OpenAI model used by the agent. Default is 'gpt-3.5-turbo' if
+  # unspecified.
+  model: gpt-3.5-turbo
+
+  # Defines the custom prompts presented by the agent.
+  prompts:
+    # System message defining the identity of the bot.
+    - role: system
+      content: >
+        You are ${RAPPORT_FIRST_NAME} ${RAPPORT_LAST_NAME}, a Telegram
+        chatbot. Your username is @${RAPPORT_USERNAME}.
+        
+    # System message providing the current date, time, and timezone.
+    - role: system
+      content: >
+        Current date: ${RAPPORT_DATE}. Current time: ${RAPPORT_TIME}.
+        Timezone: ${RAPPORT_TIMEZONE}
+
+    # Provide chat history as context
+    - role: system
+      content: >
+        You have a limited capacity to remember previous interactions.
+        The following is the entire chat history in your memory. Refer
+        to it as context when providing a response.
+
+        ${RAPPORT_CHAT_HISTORY}
+
+    # The user message as input
+    - role: user
+      content: >
+        Write a concise response to the following message. DO NOT prefix
+        your response with your own name and username.
+        
+        ${RAPPORT_USER_INPUT}
