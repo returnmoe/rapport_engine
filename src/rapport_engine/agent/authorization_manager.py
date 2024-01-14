@@ -38,7 +38,7 @@ class AuthorizationManager:
         key = self._users_key
         r = self._redis_client
 
-        success = r.sadd(key, user_id)
+        success = bool(r.sadd(key, user_id))
         if success:
             self._fetch_authorized_users()
 
@@ -49,7 +49,7 @@ class AuthorizationManager:
         key = self._users_key
         r = self._redis_client
 
-        success = not bool(r.srem(key, user_id))
+        success = bool(r.srem(key, user_id))
         if success:
             self._fetch_authorized_users()
 

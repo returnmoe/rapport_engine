@@ -14,7 +14,6 @@ from tenacity import retry, wait_exponential, stop_after_attempt
 from typing import List
 import logger
 import re
-import time
 
 
 class MessageHandler:
@@ -77,11 +76,10 @@ class MessageHandler:
         conf = self._agent_configuration.data
         stats_store = self._user_stats_store
 
-        current_time = int(time.time())
         window_interval = AgentConfiguration.timestr_to_seconds(
             conf["spec"]["messages"]["limits"]["rate"]["user"]["window"]
         )
-        window_id = TimeWindow.create_id(current_time, window_interval)
+        window_id = TimeWindow.get_current_window_id(window_interval)
 
         if user_stats.time_window.id != window_id:
             user_stats.time_window = TimeWindow(window_id, interactions)
@@ -103,22 +101,41 @@ class MessageHandler:
     def _has_exceeded_user_limit(self, user_stats: UserStats) -> bool:
         spec = self._agent_configuration.data["spec"]
         limit = spec["messages"]["limits"]["rate"]["user"]["interactions"]
-        return limit >= 0 and user_stats.time_window.interactions >= limit
+        interval_str = spec["messages"]["limits"]["rate"]["user"]["window"]
+
+        if limit < 0:
+            return False
+
+        interval = AgentConfiguration.timestr_to_seconds(interval_str)
+        window_id = TimeWindow.get_current_window_id(interval)
+
+        return (
+            window_id == user_stats.time_window.id
+            and user_stats.time_window.interactions >= limit
+        )
 
     def _has_exceeded_daily_limit(self, daily_stats: DailyStats) -> bool:
         spec = self._agent_configuration.data["spec"]
         limit = spec["messages"]["limits"]["daily"]["tokens"]
-        return limit >= 0 and daily_stats.total_tokens >= limit
+        return limit > -1 and daily_stats.total_tokens >= limit
 
     async def _send_user_limit_error(self, update: Update) -> None:
         spec = self._agent_configuration.data["spec"]
         message = spec["messages"]["errors"]["rateLimitExceeded"]
-        await update.effective_message.reply_text(message)
+        await update.effective_message.reply_text(
+            message,
+            reply_to_message_id=update.effective_message.id,
+            allow_sending_without_reply=True,
+        )
 
     async def _send_daily_limit_error(self, update: Update) -> None:
         spec = self._agent_configuration.data["spec"]
         message = spec["messages"]["errors"]["rateLimitExceeded"]
-        await update.effective_message.reply_text(message)
+        await update.effective_message.reply_text(
+            message,
+            reply_to_message_id=update.effective_message.id,
+            allow_sending_without_reply=True,
+        )
 
     def _get_additional(self, message: Message) -> dict:
         chat_history = []

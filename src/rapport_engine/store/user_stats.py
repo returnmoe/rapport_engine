@@ -13,6 +13,10 @@ class TimeWindow:
     def create_id(timestamp: int, interval: int) -> str:
         return str(timestamp - (timestamp % interval))
 
+    @staticmethod
+    def get_current_window_id(interval: int) -> str:
+        return TimeWindow.create_id(int(time.time()), interval)
+
     def __init__(self, window_id: str, interactions: int = 0):
         self.__id = window_id
         self.__interactions = interactions
