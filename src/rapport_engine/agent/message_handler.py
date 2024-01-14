@@ -205,7 +205,7 @@ class MessageHandler:
         message_store.add(message)
 
         if not self._is_authorized(user, chat):
-            self._log_unauthorized()
+            self._log_unauthorized(user, chat)
             return
 
         user_stats = self._get_user_stats(user)
