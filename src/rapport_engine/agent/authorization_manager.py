@@ -33,7 +33,7 @@ class AuthorizationManager:
             )
         return str(id)
 
-    def add_authorized_user(self, user_id: int | str) -> None:
+    def add_authorized_user(self, user_id: int | str) -> bool:
         user_id = self._prepare_user_id(user_id)
         key = self._users_key
         r = self._redis_client
