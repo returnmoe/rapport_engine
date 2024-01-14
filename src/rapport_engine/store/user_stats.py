@@ -13,8 +13,8 @@ class TimeWindow:
     def create_id(timestamp: int, interval: int) -> str:
         return str(timestamp - (timestamp % interval))
 
-    def __init__(self, id: str, interactions: int = 0):
-        self.__id = id
+    def __init__(self, window_id: str, interactions: int = 0):
+        self.__id = window_id
         self.__interactions = interactions
 
     @property
@@ -101,8 +101,8 @@ class UserStatsStore:
         key = self.__key
         r = self.__redis_client
 
-        id = user.id
-        read = r.hget(key, id)
+        user_id = user.id
+        read = r.hget(key, user_id)
 
         if not isinstance(read, bytes):
             current_time = int(time.time())
@@ -126,8 +126,5 @@ class UserStatsStore:
     def set(self, user: User, stats: UserStats) -> None:
         key = self.__key
         r = self.__redis_client
-
-        id = user.id
         value = json.dumps(stats.to_dict())
-
-        r.hset(key, id, value)
+        r.hset(key, user.id, value)
