@@ -84,6 +84,7 @@ class Agent:
 
         tg_command_handlers = [
             TgCommandHandler("add", command_handler.add, command_filters),
+            TgCommandHandler("list", command_handler.list, command_filters),
             TgCommandHandler(
                 "remove", command_handler.remove, command_filters
             ),
