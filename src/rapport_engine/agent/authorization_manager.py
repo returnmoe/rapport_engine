@@ -33,23 +33,23 @@ class AuthorizationManager:
             )
         return str(id)
 
-    def add_authorized_user(self, id: int | str) -> None:
-        id = self._prepare_user_id(id)
+    def add_authorized_user(self, user_id: int | str) -> None:
+        user_id = self._prepare_user_id(user_id)
         key = self._users_key
         r = self._redis_client
 
-        success = r.sadd(key, id)
+        success = r.sadd(key, user_id)
         if success:
             self._fetch_authorized_users()
 
         return success
 
-    def remove_authorized_user(self, id: int | str) -> bool:
-        id = self._prepare_user_id(id)
+    def remove_authorized_user(self, user_id: int | str) -> bool:
+        user_id = self._prepare_user_id(user_id)
         key = self._users_key
         r = self._redis_client
 
-        success = not bool(r.srem(key, id))
+        success = not bool(r.srem(key, user_id))
         if success:
             self._fetch_authorized_users()
 
