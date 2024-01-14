@@ -1,4 +1,4 @@
-from conf import AgentConfiguration
+from conf.agent import AgentConfiguration
 from redis import StrictRedis
 from telegram import User
 import app

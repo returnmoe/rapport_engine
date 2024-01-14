@@ -1,7 +1,7 @@
 from agent.agent import Agent
+from conf.loader import load
 from dotenv import load_dotenv
 import argparse
-import conf
 import logger
 import os
 
@@ -25,7 +25,7 @@ def main():
     logger.configure()
     log = logger.get()
 
-    agent_configuration = conf.load(args.config)
+    agent_configuration = load(args.config)
     token = os.environ.get("TELEGRAM_TOKEN")
     agent = Agent(agent_configuration, token)
     agent_name = agent_configuration.data["metadata"]["name"]

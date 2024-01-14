@@ -2,7 +2,7 @@ import app
 import json
 from telegram import Message
 from redis import StrictRedis
-from conf import AgentConfiguration
+from conf.agent import AgentConfiguration
 
 
 KEY_MESSAGE_STORE = app.NAME_SLUG + ":{agent_name}:updates:{chat_id}"

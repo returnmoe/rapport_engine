@@ -1,4 +1,4 @@
-from conf import AgentConfiguration
+from conf.agent import AgentConfiguration
 from redis import StrictRedis
 import app
 import datetime

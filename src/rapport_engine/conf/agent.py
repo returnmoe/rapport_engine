@@ -1,9 +1,8 @@
 from . import schema
-from .exc import *
+from .exc import InvalidConfigurationError
 from dateutil import parser
 from jsonschema import validate, exceptions
 import collections.abc
-import yaml
 
 
 class AgentConfiguration:
@@ -58,7 +57,6 @@ class AgentConfiguration:
     def __init__(self, data: dict):
         self.data = self.__recursive_update(self.__defaults, data)
         self.__validate()
-        pass
 
     def __validate(self):
         try:
@@ -86,9 +84,3 @@ class AgentConfiguration:
             raise InvalidConfigurationError(
                 f"Invalid configuration: {e.message}"
             )
-
-
-def load(path: str) -> AgentConfiguration:
-    with open(path, "r") as f:
-        contents = yaml.safe_load(f)
-    return AgentConfiguration(contents)

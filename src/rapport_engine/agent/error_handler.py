@@ -1,4 +1,4 @@
-from conf import AgentConfiguration
+from conf.agent import AgentConfiguration
 from telegram import Update
 from telegram.ext import CallbackContext
 import logger

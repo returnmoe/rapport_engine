@@ -3,7 +3,7 @@ from .command_handler import CommandHandler
 from .error_handler import ErrorHandler
 from .message_handler import MessageHandler
 from .message_preprocessor import MessagePreprocessor
-from conf import AgentConfiguration
+from conf.agent import AgentConfiguration
 from openai import OpenAI
 from store.daily_stats import DailyStatsStore
 from store.message import MessageStore
