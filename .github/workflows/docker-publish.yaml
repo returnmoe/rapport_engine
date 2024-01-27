@@ -7,7 +7,12 @@ on:
 
 jobs:
   build-and-push:
+    name: Build & Push
+    permissions:
+      packages: write
+      contents: read
     runs-on: ubuntu-latest
+
     steps:
     - name: Check out the repository
       uses: actions/checkout@v4
