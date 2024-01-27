@@ -28,4 +28,4 @@ jobs:
         context: .
         file: Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}/rapport_engine:snapshot.${{ github.run_number }}
+        tags: ghcr.io/returnmoe/rapport_engine:snapshot.${{ github.run_number }}
