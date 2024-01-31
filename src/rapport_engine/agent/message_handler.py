@@ -175,7 +175,7 @@ class MessageHandler:
 
     async def _send_daily_limit_error(self, update: Update) -> None:
         spec = self._agent_configuration.data["spec"]
-        message = spec["messages"]["errors"]["rateLimitExceeded"]
+        message = spec["messages"]["errors"]["dailyLimitExceeded"]
         await update.effective_message.reply_text(
             message,
             reply_to_message_id=update.effective_message.id,
