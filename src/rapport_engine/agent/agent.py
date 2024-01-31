@@ -58,6 +58,7 @@ class Agent:
         self._error_handler = ErrorHandler(agent_configuration)
         self._command_handler = CommandHandler(authorization_manager)
         self._message_handler = MessageHandler(
+            user.id,
             agent_configuration,
             openai_client,
             message_preprocessor,

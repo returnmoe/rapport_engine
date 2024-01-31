@@ -20,7 +20,7 @@ spec:
     # Agent activates when it detects the specified keyword
     # (in this case, the user's Telegram username).
     - type: keyword
-      value: ${RAPPORT_USERNAME}
+      value: "@${RAPPORT_USERNAME}"
       
     # Agent activates when it detects the specified keyword
     # (in this case, the user's first name).

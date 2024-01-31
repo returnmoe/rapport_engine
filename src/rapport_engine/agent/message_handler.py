@@ -19,6 +19,7 @@ import re
 class MessageHandler:
     def __init__(
         self,
+        tg_bot_id: int,
         agent_configuration: AgentConfiguration,
         openai_client: OpenAI,
         message_preprocessor: MessagePreprocessor,
@@ -27,6 +28,7 @@ class MessageHandler:
         user_stats_store: UserStatsStore,
         message_store: MessageStore,
     ):
+        self._tg_bot_id = tg_bot_id
         self._agent_configuration = agent_configuration
         self._openai_client = openai_client
         self._message_preprocessor = message_preprocessor
@@ -34,6 +36,23 @@ class MessageHandler:
         self._daily_stats_store = daily_stats_store
         self._user_stats_store = user_stats_store
         self._message_store = message_store
+
+    def _log_not_activated(self, user: User, chat: Chat) -> None:
+        chat_username, user_username = "", ""
+
+        if isinstance(chat.username, str):
+            chat_username = f"@{chat.username}"
+
+        if isinstance(user.username, str):
+            user_username = f"@{user.username}"
+
+        logger.get().debug(
+            "Discarded message because it does not match activation rules",
+            chat_id=chat.id,
+            chat_username=chat_username,
+            user_id=user.id,
+            user_username=user_username,
+        )
 
     def _log_unauthorized(self, user: User, chat: Chat) -> None:
         chat_username, user_username = "", ""
@@ -61,6 +80,32 @@ class MessageHandler:
                 id_list.append(f"@{entity.username}")
 
         return any(id in authorized_users for id in id_list)
+
+    def _is_reply_to_bot(self, message: Message) -> bool:
+        return (
+            message.reply_to_message is not None
+            and message.reply_to_message.from_user.id == self._tg_bot_id
+        )
+
+    def _has_activation_keyword(self, message: Message, keyword: str) -> bool:
+        additional = self._get_additional(message)
+        preprocessor = self._message_preprocessor
+        effective_keyword = preprocessor.format(keyword, additional)
+        return effective_keyword in message.text
+
+    def _should_activate(self, message: Message) -> bool:
+        conf = self._agent_configuration.data
+        activation_rules = conf["spec"]["activation"]
+
+        for rule in activation_rules:
+            if rule["type"] == "reply" and self._is_reply_to_bot(message):
+                return True
+            if rule["type"] == "keyword" and self._has_activation_keyword(
+                message, rule["value"]
+            ):
+                return True
+
+        return False
 
     def _get_user_stats(self, user: User) -> UserStats:
         stats_store = self._user_stats_store
@@ -217,6 +262,10 @@ class MessageHandler:
         user = update.effective_message.from_user
 
         message_store.add(message)
+
+        if not self._should_activate(message):
+            self._log_not_activated(user, chat)
+            return
 
         if not self._is_authorized(user, chat):
             self._log_unauthorized(user, chat)
