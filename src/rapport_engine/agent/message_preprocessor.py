@@ -24,7 +24,7 @@ class MessagePreprocessor:
             return datetime.datetime.now().date().strftime("%Y-%m-%d")
 
         if name == "RAPPORT_TIME":
-            return datetime.datetime.now().date().strftime("%I:%M %p")
+            return datetime.datetime.now().strftime("%I:%M %p")
 
         if name == "RAPPORT_TIMEZONE":
             return str(tzlocal.get_localzone())
